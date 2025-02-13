@@ -13,8 +13,8 @@ const Toggler = () => {
 
   return (
     <div className="flex items-center space-x-2">
-      <button onClick={toggleTheme} className="p-2 border-2 border-gray-500 rounded dark:text-gray-500 cursor-pointer">
-        {theme === "light" ? <Sun size={24} /> : <Moon size={24} />}
+      <button onClick={toggleTheme} className="p-2 dark:text-gray-500 cursor-pointer">
+        {theme === "light" ? <Sun size={20} /> : <Moon size={20} />}
       </button>
     </div>
   );
