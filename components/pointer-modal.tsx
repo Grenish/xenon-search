@@ -17,7 +17,17 @@ interface Website {
 
 type Mode = "default" | "select" | "remove";
 
-export default function PointerModal() {
+interface PointerModalProps {
+  onClose: () => void;
+  selectedWebsites: Set<string>;
+  setSelectedWebsites: React.Dispatch<React.SetStateAction<Set<string>>>;
+}
+
+export default function PointerModal({
+  onClose,
+  selectedWebsites,
+  setSelectedWebsites,
+}: PointerModalProps) {
   const [websites, setWebsites] = useState<Website[]>([
     { name: "StackOverflow", link: "https://stackoverflow.com" },
     { name: "GitHub Discussions", link: "https://github.com/discussions" },
@@ -30,9 +40,6 @@ export default function PointerModal() {
   ]);
 
   const [mode, setMode] = useState<Mode>("default");
-  const [selectedWebsites, setSelectedWebsites] = useState<Set<string>>(
-    new Set()
-  );
   const [newWebsite, setNewWebsite] = useState<Website>({ name: "", link: "" });
 
   const toggleSelect = (link: string) => {
@@ -72,7 +79,7 @@ export default function PointerModal() {
   const toggleSelectMode = () => {
     if (mode !== "select") {
       setMode("select");
-      setSelectedWebsites(new Set(websites.map((site) => site.link)));
+      setSelectedWebsites(new Set()); // Initialize empty selection
     } else {
       const allSelected = websites.every((site) =>
         selectedWebsites.has(site.link)
@@ -93,7 +100,7 @@ export default function PointerModal() {
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 dark:bg-neutral-900 p-6 rounded-xl w-96 shadow-lg">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold dark:text-gray-200">Pointers</h2>
-        <button className="cursor-pointer">
+        <button className="cursor-pointer" onClick={onClose}>
           <X size={15} className="dark:text-gray-200" />
         </button>
       </div>
@@ -111,10 +118,10 @@ export default function PointerModal() {
             key={index}
             className="flex items-center justify-between cursor-pointer mb-2"
             onClick={() => {
-              if (mode === "select") {
-                toggleSelect(site.link);
-              } else if (mode === "remove") {
+              if (mode === "remove") {
                 removeWebsite(index);
+              } else {
+                toggleSelect(site.link);
               }
             }}
           >
