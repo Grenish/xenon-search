@@ -8,9 +8,16 @@ import PointerModal from "@/components/pointer-modal";
 
 export default function Home() {
   const [isPointerModalOpen, setIsPointerModalOpen] = useState(false);
+  const [selectedWebsites, setSelectedWebsites] = useState<Set<string>>(
+    new Set()
+  );
 
   const handlePointerModal = () => {
     setIsPointerModalOpen(!isPointerModalOpen);
+  };
+
+  const handleModalClose = () => {
+    setIsPointerModalOpen(false);
   };
 
   return (
@@ -49,10 +56,17 @@ export default function Home() {
               className="text-xs cursor-pointer"
               onClick={handlePointerModal}
             >
-              Point: Everywhere
+              Point:{" "}
+              {selectedWebsites.size > 0 ? selectedWebsites.size : "Everywhere"}
             </button>
           </div>
-          {isPointerModalOpen && <PointerModal />}
+          {isPointerModalOpen && (
+            <PointerModal
+              onClose={handleModalClose}
+              selectedWebsites={selectedWebsites}
+              setSelectedWebsites={setSelectedWebsites}
+            />
+          )}
         </div>
       </div>
       <div className="mt-2">
