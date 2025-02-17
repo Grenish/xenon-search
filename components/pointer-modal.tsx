@@ -43,17 +43,18 @@ export default function PointerModal({
   const [newWebsite, setNewWebsite] = useState<Website>({ name: "", link: "" });
 
   const toggleSelect = (link: string) => {
-    setSelectedWebsites((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(link)) {
-        newSet.delete(link);
-      } else {
-        newSet.add(link);
-      }
-      return newSet;
-    });
+    if (mode === "default" || mode === "select") {
+      setSelectedWebsites((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(link)) {
+          newSet.delete(link);
+        } else {
+          newSet.add(link);
+        }
+        return newSet;
+      });
+    }
   };
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewWebsite((prev) => ({
@@ -79,7 +80,8 @@ export default function PointerModal({
   const toggleSelectMode = () => {
     if (mode !== "select") {
       setMode("select");
-      setSelectedWebsites(new Set()); // Initialize empty selection
+      // Remove this line to preserve selections when entering select mode
+      // setSelectedWebsites(new Set());
     } else {
       const allSelected = websites.every((site) =>
         selectedWebsites.has(site.link)
@@ -114,13 +116,14 @@ export default function PointerModal({
       </div>
       <div>
         {websites.map((site, index) => (
+          // In the onClick handler of the website item div
           <div
             key={index}
             className="flex items-center justify-between cursor-pointer mb-2"
             onClick={() => {
               if (mode === "remove") {
                 removeWebsite(index);
-              } else {
+              } else if (mode === "default" || mode === "select") {
                 toggleSelect(site.link);
               }
             }}
@@ -134,14 +137,10 @@ export default function PointerModal({
               <span>{site.name}</span>
             </div>
             <div className="flex items-center justify-center w-6 h-6 pointer-events-none">
-              {mode === "select" ? (
-                selectedWebsites.has(site.link) ? (
-                  <DiamondPlus size={15} className="dark:text-gray-200" />
-                ) : (
-                  <Plus size={15} className="dark:text-gray-200" />
-                )
-              ) : mode === "remove" ? (
+              {mode === "remove" ? (
                 <Minus size={15} className="dark:text-gray-200" />
+              ) : selectedWebsites.has(site.link) ? (
+                <DiamondPlus size={15} className="dark:text-gray-200" />
               ) : (
                 <Plus size={15} className="dark:text-gray-200" />
               )}
